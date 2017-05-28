@@ -154,8 +154,8 @@ module.exports = class TransactionController extends EventEmitter {
     // ensure value
     txParams.value = txParams.value || '0x0'
     if (txParams.gasPrice) {
-      const string = txParams.gasPrice.toString(16)
-      txParams.gasPrice = ethUtil.addHexPrefix(string)
+      const hexString = txParams.gasPrice.toString(16)
+      txParams.gasPrice = ethUtil.addHexPrefix(hexString)
     } else {
       this.query.gasPrice((err, gasPrice) => {
         if (err) return cb(err)
