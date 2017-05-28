@@ -153,13 +153,18 @@ module.exports = class TransactionController extends EventEmitter {
     const txParams = txMeta.txParams
     // ensure value
     txParams.value = txParams.value || '0x0'
-    this.query.gasPrice((err, gasPrice) => {
-      if (err) return cb(err)
-      // set gasPrice
-      txParams.gasPrice = gasPrice
-      // set gasLimit
-      this.txProviderUtils.analyzeGasUsage(txMeta, cb)
-    })
+    if (txParams.gasPrice) {
+      const string = txParams.gasPrice.toString(16)
+      txParams.gasPrice = ethUtil.addHexPrefix(string)
+    } else {
+      this.query.gasPrice((err, gasPrice) => {
+        if (err) return cb(err)
+        // set gasPrice
+        txParams.gasPrice = gasPrice
+      })
+    }
+    // set gasLimit
+    this.txProviderUtils.analyzeGasUsage(txMeta, cb)
   }
 
   getUnapprovedTxList () {
@@ -388,7 +393,6 @@ module.exports = class TransactionController extends EventEmitter {
     this.emit(`${txMeta.id}:${status}`, txId)
     if (status === 'submitted' || status === 'rejected') {
       this.emit(`${txMeta.id}:finished`, txMeta)
-
     }
     this.updateTx(txMeta)
     this.emit('updateBadge')
