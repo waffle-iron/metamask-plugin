@@ -24,8 +24,9 @@ module.exports = class TransactionController extends EventEmitter {
     this.blockTracker = opts.blockTracker
     this.query = opts.ethQuery
     this.txProviderUtils = new TxProviderUtil(this.query)
-    this.blockTracker.on('block', this.checkForTxInBlock.bind(this))
-    this.blockTracker.on('block', this.resubmitPendingTxs.bind(this))
+    this.provider._blockTracker.on('block', console.log.bind(console, 'block out'))
+    this.provider._blockTracker.on('block', this.checkForTxInBlock.bind(this))
+    this.provider._blockTracker.on('block', this.resubmitPendingTxs.bind(this))
     // provider-engine only exploses the 'block' event, not 'latest' for 'sync'
     this.provider._blockTracker.on('sync', this.queryPendingTxs.bind(this))
     this.signEthTx = opts.signTransaction
@@ -341,7 +342,9 @@ module.exports = class TransactionController extends EventEmitter {
   //  checks if a signed tx is in a block and
   // if included sets the tx status as 'confirmed'
   checkForTxInBlock (block) {
+    console.log(block, 'block')
     var signedTxList = this.getFilteredTxList({status: 'submitted'})
+    console.log(signedTxList, 'array')
     if (!signedTxList.length) return
     signedTxList.forEach((txMeta) => {
       var txHash = txMeta.hash
@@ -363,6 +366,7 @@ module.exports = class TransactionController extends EventEmitter {
 
   queryPendingTxs ({oldBlock, newBlock}) {
     // check pending transactions on start
+    console.log('oldBlock, newBlock')
     if (!oldBlock) {
       this._checkPendingTxs()
       return
@@ -413,7 +417,9 @@ module.exports = class TransactionController extends EventEmitter {
   resubmitPendingTxs () {
     const pending = this.getTxsByMetaData('status', 'submitted')
     // only try resubmitting if their are transactions to resubmit
+    console.log(pending, 'pending')
     if (!pending.length) return
+    console.log(pending, 'after 0 return')
     const resubmit = denodeify(this.resubmitTx.bind(this))
     Promise.all(pending.map(txMeta => resubmit(txMeta)))
     .catch((reason) => {
@@ -450,6 +456,7 @@ module.exports = class TransactionController extends EventEmitter {
   // if confirmed sets the tx status as 'confirmed'
   _checkPendingTxs () {
     var signedTxList = this.getFilteredTxList({status: 'submitted'})
+    console.log(signedTxList, '_checkPendingTxs')
     if (!signedTxList.length) return
     signedTxList.forEach((txMeta) => {
       var txHash = txMeta.hash
