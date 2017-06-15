@@ -14,27 +14,27 @@ describe('contractNamer', function () {
   })
 
   describe('naming a contract', function () {
-    it('should return nothing for an unknown random account', function () {
+    it('should return nothing for an unknown random account', async function () {
       const input = '0x2386F26FC10000'
-      const output = contractNamer(input)
+      const output = await contractNamer(input)
       assert.deepEqual(output, null)
     })
 
-    it('should accept identities as an optional second parameter', function () {
+    it('should accept identities as an optional second parameter', async function () {
       const input = '0x2386F26FC10000'.toLowerCase()
       const expected = 'bar'
       const identities = {}
       identities[input] = { name: expected }
-      const output = contractNamer(input, identities)
+      const output = await contractNamer(input, identities)
       assert.deepEqual(output, expected)
     })
 
-    it('should check for identities case insensitively', function () {
+    it('should check for identities case insensitively', async function () {
       const input = '0x2386F26FC10000'.toLowerCase()
       const expected = 'bar'
       const identities = {}
       identities[input] = { name: expected }
-      const output = contractNamer(input.toUpperCase(), identities)
+      const output = await contractNamer(input.toUpperCase(), identities)
       assert.deepEqual(output, expected)
     })
   })

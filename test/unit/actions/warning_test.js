@@ -7,7 +7,7 @@ var actions = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'actio
 var reducers = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'reducers.js'))
 
 describe('action DISPLAY_WARNING', function () {
-  it('sets appState.warning to provided value', function () {
+  it('sets appState.warning to provided value', function (done) {
     var initialState = {
       appState: {},
     }
@@ -19,5 +19,6 @@ describe('action DISPLAY_WARNING', function () {
     const resultingState = reducers(initialState, action)
 
     assert.equal(resultingState.appState.warning, warningText, 'warning text set')
+    done()
   })
 })

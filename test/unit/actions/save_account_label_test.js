@@ -7,7 +7,7 @@ var actions = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'actio
 var reducers = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'reducers.js'))
 
 describe('SAVE_ACCOUNT_LABEL', function () {
-  it('updates the state.metamask.identities[:i].name property of the state to the action.value.label', function () {
+  it('updates the state.metamask.identities[:i].name property of the state to the action.value.label', async function () {
     var initialState = {
       metamask: {
         identities: {
@@ -28,7 +28,7 @@ describe('SAVE_ACCOUNT_LABEL', function () {
     }
     freeze(action)
 
-    var resultingState = reducers(initialState, action)
+    var resultingState = await reducers(initialState, action)
     assert.equal(resultingState.metamask.identities.foo.name, action.value.label)
   })
 })

@@ -5,6 +5,7 @@ describe('# Network Controller', function () {
   let networkController
 
   beforeEach(function () {
+    // this.timeout(15000)
     networkController = new NetworkController({
       provider: {
         type: 'rinkeby',
@@ -25,6 +26,7 @@ describe('# Network Controller', function () {
         return () => {}
       },
     })
+    // setTimeout(done, 15000)
   })
   describe('network', function () {
     describe('#provider', function () {

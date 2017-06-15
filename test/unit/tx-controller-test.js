@@ -15,13 +15,13 @@ const privKey = new Buffer('8718b9618a37d1fc78c436511fc6df3c8258d3250635bba617f3
 describe('Transaction Controller', function () {
   let txController
 
-  beforeEach(function () {
-    txController = new TransactionController({
-      networkStore: new ObservableStore(currentNetworkId),
+  beforeEach(async function () {
+    txController = await new TransactionController({
+      networkStore: await new ObservableStore(currentNetworkId),
       txHistoryLimit: 10,
-      blockTracker: new EventEmitter(),
-      ethQuery: new EthQuery(new EventEmitter()),
-      signTransaction: (ethTx) => new Promise((resolve) => {
+      blockTracker: await new EventEmitter(),
+      ethQuery: await new EthQuery(new EventEmitter()),
+      signTransaction: async (ethTx) => await new Promise((resolve) => {
         ethTx.sign(privKey)
         resolve()
       }),
@@ -29,28 +29,28 @@ describe('Transaction Controller', function () {
   })
 
   describe('#validateTxParams', function () {
-    it('returns null for positive values', function () {
+    it('returns null for positive values', async function () {
       var sample = {
         value: '0x01',
       }
-      txController.txProviderUtils.validateTxParams(sample, (err) => {
+      await txController.txProviderUtils.validateTxParams(sample, (err) => {
         assert.equal(err, null, 'no error')
       })
     })
 
-    it('returns error for negative values', function () {
+    it('returns error for negative values', async function () {
       var sample = {
         value: '-0x01',
       }
-      txController.txProviderUtils.validateTxParams(sample, (err) => {
+      await txController.txProviderUtils.validateTxParams(sample, (err) => {
         assert.ok(err, 'error')
       })
     })
   })
 
   describe('#getTxList', function () {
-    it('when new should return empty array', function () {
-      var result = txController.getTxList()
+    it('when new should return empty array', async function () {
+      var result = await txController.getTxList()
       assert.ok(Array.isArray(result))
       assert.equal(result.length, 0)
     })
@@ -60,31 +60,31 @@ describe('Transaction Controller', function () {
   })
 
   describe('#addTx', function () {
-    it('adds a tx returned in getTxList', function () {
+    it('adds a tx returned in getTxList', async function () {
       var tx = { id: 1, status: 'confirmed', metamaskNetworkId: currentNetworkId, txParams: {} }
-      txController.addTx(tx, noop)
-      var result = txController.getTxList()
+      await txController.addTx(tx, noop)
+      var result = await txController.getTxList()
       assert.ok(Array.isArray(result))
       assert.equal(result.length, 1)
       assert.equal(result[0].id, 1)
     })
 
-    it('does not override txs from other networks', function () {
+    it('does not override txs from other networks', async function () {
       var tx = { id: 1, status: 'confirmed', metamaskNetworkId: currentNetworkId, txParams: {} }
       var tx2 = { id: 2, status: 'confirmed', metamaskNetworkId: otherNetworkId, txParams: {} }
-      txController.addTx(tx, noop)
-      txController.addTx(tx2, noop)
-      var result = txController.getFullTxList()
-      var result2 = txController.getTxList()
+      await txController.addTx(tx, noop)
+      await txController.addTx(tx2, noop)
+      var result = await txController.getFullTxList()
+      var result2 = await txController.getTxList()
       assert.equal(result.length, 2, 'txs were deleted')
       assert.equal(result2.length, 1, 'incorrect number of txs on network.')
     })
 
-    it('cuts off early txs beyond a limit', function () {
+    it('cuts off early txs beyond a limit', async function () {
       const limit = txController.txHistoryLimit
       for (let i = 0; i < limit + 1; i++) {
         const tx = { id: i, time: new Date(), status: 'confirmed', metamaskNetworkId: currentNetworkId, txParams: {} }
-        txController.addTx(tx, noop)
+        await txController.addTx(tx, noop)
       }
       var result = txController.getTxList()
       assert.equal(result.length, limit, `limit of ${limit} txs enforced`)
@@ -102,7 +102,7 @@ describe('Transaction Controller', function () {
       assert.equal(result[0].id, 1, 'early txs truncted')
     })
 
-    it('cuts off early txs beyond a limit but does not cut unapproved txs', function () {
+    it('cuts off early txs beyond a limit but does not cut unapproved txs', function (done) {
       var unconfirmedTx = { id: 0, time: new Date(), status: 'unapproved', metamaskNetworkId: currentNetworkId, txParams: {} }
       txController.addTx(unconfirmedTx, noop)
       const limit = txController.txHistoryLimit
@@ -115,14 +115,15 @@ describe('Transaction Controller', function () {
       assert.equal(result[0].id, 0, 'first tx should still be there')
       assert.equal(result[0].status, 'unapproved', 'first tx should be unapproved')
       assert.equal(result[1].id, 2, 'early txs truncted')
+      done()
     })
   })
 
   describe('#setTxStatusSigned', function () {
-    it('sets the tx status to signed', function () {
+    it('sets the tx status to signed', async function () {
       var tx = { id: 1, status: 'unapproved', metamaskNetworkId: currentNetworkId, txParams: {} }
-      txController.addTx(tx, noop)
-      txController.setTxStatusSigned(1)
+      await txController.addTx(tx, noop)
+      await txController.setTxStatusSigned(1)
       var result = txController.getTxList()
       assert.ok(Array.isArray(result))
       assert.equal(result.length, 1)
@@ -219,7 +220,7 @@ describe('Transaction Controller', function () {
   })
 
   describe('#getFilteredTxList', function () {
-    it('returns a tx with the requested data', function () {
+    it('returns a tx with the requested data', async function () {
       const txMetas = [
         { id: 0, status: 'unapproved', txParams: { from: '0xaa', to: '0xbb' }, metamaskNetworkId: currentNetworkId },
         { id: 1, status: 'unapproved', txParams: { from: '0xaa', to: '0xbb' }, metamaskNetworkId: currentNetworkId },
@@ -232,7 +233,7 @@ describe('Transaction Controller', function () {
         { id: 8, status: 'confirmed', txParams: { from: '0xbb', to: '0xaa' }, metamaskNetworkId: currentNetworkId },
         { id: 9, status: 'confirmed', txParams: { from: '0xbb', to: '0xaa' }, metamaskNetworkId: currentNetworkId },
       ]
-      txMetas.forEach((txMeta) => txController.addTx(txMeta, noop))
+      await txMetas.forEach((txMeta) => txController.addTx(txMeta, noop))
       let filterParams
 
       filterParams = { status: 'unapproved', from: '0xaa' }
@@ -268,25 +269,25 @@ describe('Transaction Controller', function () {
     })
 
 
-    it('does not overwrite set values', function (done) {
+    it('does not overwrite set values', async function () {
       const wrongValue = '0x05'
 
       txController.addTx(txMeta)
 
       const estimateStub = sinon.stub(txController.txProviderUtils.query, 'estimateGas')
-      .callsArgWith(1, null, wrongValue)
+      .callsArgWithAsync(1, null, wrongValue)
 
       const priceStub = sinon.stub(txController.txProviderUtils.query, 'gasPrice')
-      .callsArgWith(0, null, wrongValue)
+      .callsArgWithAsync(0, null, wrongValue)
 
       const nonceStub = sinon.stub(txController.txProviderUtils.query, 'getTransactionCount')
-      .callsArgWith(2, null, wrongValue)
+      .callsArgWithAsync(2, null, wrongValue)
 
       const signStub = sinon.stub(txController, 'signTransaction')
-      .callsArgWith(1, null, noop)
+      .callsArgWithAsync(1, null, noop)
 
       const pubStub = sinon.stub(txController.txProviderUtils, 'publishTransaction')
-      .callsArgWith(1, null, originalValue)
+      .callsArgWithAsync(1, null, originalValue)
 
       txController.approveTransaction(txMeta.id, (err) => {
         assert.ifError(err, 'should not error')
@@ -304,8 +305,6 @@ describe('Transaction Controller', function () {
         signStub.restore()
         nonceStub.restore()
         pubStub.restore()
-
-        done()
       })
     })
   })

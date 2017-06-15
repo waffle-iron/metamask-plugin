@@ -89,7 +89,7 @@ describe('tx confirmation screen', function () {
       })
 
       describe('when there is success', function () {
-        it('should complete tx and go home', function () {
+        it('should complete tx and go home', function (done) {
           actions._setBackgroundConnection({
             approveTransaction (txId, cb) { cb() },
           })
@@ -98,6 +98,7 @@ describe('tx confirmation screen', function () {
           dispatchExpect.twice()
 
           actions.sendTx({id: firstTxId})(dispatchExpect)
+          done()
         })
       })
     })

@@ -1,23 +1,23 @@
 var assert = require('assert')
 var BinaryRenderer = require('../../../ui/app/components/binary-renderer')
 
-describe('BinaryRenderer', function () {
+describe('BinaryRenderer', async function () {
   let binaryRenderer
   const message = 'Hello, world!'
-  const buffer = new Buffer(message, 'utf8')
+  const buffer = await new Buffer(message, 'utf8')
   const hex = buffer.toString('hex')
 
-  beforeEach(function () {
-    binaryRenderer = new BinaryRenderer()
+  beforeEach(async function () {
+    binaryRenderer = await new BinaryRenderer()
   })
 
-  it('recovers message', function () {
-    const result = binaryRenderer.hexToText(hex)
+  it('recovers message', async function () {
+    const result = await binaryRenderer.hexToText(hex)
     assert.equal(result, message)
   })
 
-  it('recovers message with hex prefix', function () {
-    const result = binaryRenderer.hexToText('0x' + hex)
+  it('recovers message with hex prefix', async function () {
+    const result = await binaryRenderer.hexToText('0x' + hex)
     assert.equal(result, message)
   })
 })

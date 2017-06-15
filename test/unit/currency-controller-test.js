@@ -8,30 +8,33 @@ const CurrencyController = require('../../app/scripts/controllers/currency')
 describe('currency-controller', function () {
   var currencyController
 
-  beforeEach(function () {
-    currencyController = new CurrencyController()
+  beforeEach(async function () {
+    currencyController = await new CurrencyController()
   })
 
   describe('currency conversions', function () {
     describe('#setCurrentCurrency', function () {
-      it('should return USD as default', function () {
+      it('should return USD as default', function (done) {
         assert.equal(currencyController.getCurrentCurrency(), 'USD')
+        done()
       })
 
-      it('should be able to set to other currency', function () {
+      it('should be able to set to other currency', function (done) {
         assert.equal(currencyController.getCurrentCurrency(), 'USD')
         currencyController.setCurrentCurrency('JPY')
         var result = currencyController.getCurrentCurrency()
         assert.equal(result, 'JPY')
+        done()
       })
     })
 
     describe('#getConversionRate', function () {
-      it('should return undefined if non-existent', function () {
+      it('should return undefined if non-existent', function (done) {
         var result = currencyController.getConversionRate()
         assert.ok(!result)
+        done()
       })
-    })
+    }) 
 
     describe('#updateConversionRate', function () {
       it('should retrieve an update for ETH to USD and set it in memory', function (done) {
@@ -53,7 +56,7 @@ describe('currency-controller', function () {
         })
       })
 
-      it('should work for JPY as well.', function () {
+      it('should work for JPY as well.', function (done) {
         this.timeout(15000)
         assert.equal(currencyController.getConversionRate(), 0)
 
@@ -73,6 +76,7 @@ describe('currency-controller', function () {
         promise.then(function () {
           var result = currencyController.getConversionRate()
           assert.equal(typeof result, 'number')
+          done()
         }).catch(function (done, err) {
           done(err)
         })

@@ -4,9 +4,9 @@ const nodeify = require('../../app/scripts/lib/nodeify')
 describe('nodeify', function () {
   var obj = {
     foo: 'bar',
-    promiseFunc: function (a) {
+    promiseFunc: async function (a) {
       var solution = this.foo + a
-      return Promise.resolve(solution)
+      return await Promise.resolve(solution)
     },
   }
 
@@ -15,6 +15,7 @@ describe('nodeify', function () {
     nodified('baz', function (err, res) {
       assert.equal(res, 'barbaz')
       done()
+      if (err) done(err)
     })
   })
 })

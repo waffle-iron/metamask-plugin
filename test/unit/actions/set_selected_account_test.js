@@ -7,7 +7,7 @@ var actions = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'actio
 var reducers = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'reducers.js'))
 
 describe('SET_SELECTED_ACCOUNT', function () {
-  it('sets the state.appState.activeAddress property of the state to the action.value', function () {
+  it('sets the state.appState.activeAddress property of the state to the action.value', async function () {
     var initialState = {
       appState: {
         activeAddress: 'foo',
@@ -21,13 +21,13 @@ describe('SET_SELECTED_ACCOUNT', function () {
     }
     freeze(action)
 
-    var resultingState = reducers(initialState, action)
+    var resultingState = await reducers(initialState, action)
     assert.equal(resultingState.appState.activeAddress, action.value)
   })
 })
 
 describe('SHOW_ACCOUNT_DETAIL', function () {
-  it('updates metamask state', function () {
+  it('updates metamask state', async function () {
     var initialState = {
       metamask: {
         selectedAddress: 'foo',
@@ -41,7 +41,7 @@ describe('SHOW_ACCOUNT_DETAIL', function () {
     }
     freeze(action)
 
-    var resultingState = reducers(initialState, action)
+    var resultingState = await reducers(initialState, action)
     assert.equal(resultingState.metamask.selectedAddress, action.value)
   })
 })

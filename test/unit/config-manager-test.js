@@ -7,12 +7,13 @@ const configManagerGen = require('../lib/mock-config-manager')
 describe('config-manager', function () {
   var configManager
 
-  beforeEach(function () {
+  beforeEach(function (done) {
     configManager = configManagerGen()
+    done()
   })
 
   describe('#setConfig', function () {
-    it('should set the config key', function () {
+    it('should set the config key', function (done) {
       var testConfig = {
         provider: {
           type: 'rpc',
@@ -24,9 +25,10 @@ describe('config-manager', function () {
 
       assert.equal(result.config.provider.type, testConfig.provider.type)
       assert.equal(result.config.provider.rpcTarget, testConfig.provider.rpcTarget)
+      done()
     })
 
-    it('setting wallet should not overwrite config', function () {
+    it('setting wallet should not overwrite config', function (done) {
       var testConfig = {
         provider: {
           type: 'rpc',
@@ -51,16 +53,17 @@ describe('config-manager', function () {
       assert.equal(result.wallet.name, testWallet.name, 'wallet name is set')
       assert.equal(result.config.provider.rpcTarget, testConfig.provider.rpcTarget)
       assert.equal(result.config.provider.type, testConfig.provider.type)
+      done()
     })
   })
 
   describe('wallet nicknames', function () {
-    it('should return null when no nicknames are saved', function () {
-      var nick = configManager.nicknameForWallet('0x0')
+    it('should return null when no nicknames are saved', async function () {
+      var nick = await configManager.nicknameForWallet('0x0')
       assert.equal(nick, null, 'no nickname returned')
     })
 
-    it('should persist nicknames', function () {
+    it('should persist nicknames', function (done) {
       var account = '0x0'
       var nick1 = 'foo'
       var nick2 = 'bar'
@@ -72,11 +75,12 @@ describe('config-manager', function () {
       configManager.setNicknameForWallet(account, nick2)
       var result2 = configManager.nicknameForWallet(account)
       assert.equal(result2, nick2)
+      done()
     })
   })
 
   describe('rpc manipulations', function () {
-    it('changing rpc should return a different rpc', function () {
+    it('changing rpc should return a different rpc', function (done) {
       var firstRpc = 'first'
       var secondRpc = 'second'
 
@@ -87,28 +91,31 @@ describe('config-manager', function () {
       configManager.setRpcTarget(secondRpc)
       var secondResult = configManager.getCurrentRpcAddress()
       assert.equal(secondResult, secondRpc)
+      done()
     })
   })
 
   describe('transactions', function () {
-    beforeEach(function () {
-      configManager.setTxList([])
+    beforeEach(async function () {
+      await configManager.setTxList([])
     })
 
     describe('#getTxList', function () {
-      it('when new should return empty array', function () {
+      it('when new should return empty array', function (done) {
         var result = configManager.getTxList()
         assert.ok(Array.isArray(result))
         assert.equal(result.length, 0)
+        done()
       })
     })
 
     describe('#setTxList', function () {
-      it('saves the submitted data to the tx list', function () {
+      it('saves the submitted data to the tx list', function (done) {
         var target = [{ foo: 'bar' }]
         configManager.setTxList(target)
         var result = configManager.getTxList()
         assert.equal(result[0].foo, 'bar')
+        done()
       })
     })
   })

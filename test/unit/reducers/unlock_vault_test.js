@@ -19,7 +19,7 @@ describe('#unlockMetamask(selectedAccount)', function () {
   })
 
   describe('after an error', function () {
-    it('clears warning', function () {
+    it('clears warning', async function () {
       const warning = 'this is the wrong warning'
       const account = 'foo_account'
       const initialState = {
@@ -28,13 +28,13 @@ describe('#unlockMetamask(selectedAccount)', function () {
         },
       }
 
-      const resultState = reducers(initialState, actions.unlockMetamask(account))
+      const resultState = await reducers(initialState, actions.unlockMetamask(account))
       assert.equal(resultState.appState.warning, null, 'warning nullified')
     })
   })
 
   describe('going home after an error', function () {
-    it('clears warning', function () {
+    it('clears warning', async function () {
       const warning = 'this is the wrong warning'
       // const account = 'foo_account'
       const initialState = {
@@ -43,7 +43,7 @@ describe('#unlockMetamask(selectedAccount)', function () {
         },
       }
 
-      const resultState = reducers(initialState, actions.goHome())
+      const resultState = await reducers(initialState, actions.goHome())
       assert.equal(resultState.appState.warning, null, 'warning nullified')
     })
   })

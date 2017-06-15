@@ -7,7 +7,7 @@ var actions = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'actio
 var reducers = require(path.join(__dirname, '..', '..', '..', 'ui', 'app', 'reducers.js'))
 
 describe('SHOW_INFO_PAGE', function () {
-  it('sets the state.appState.currentView.name property to info', function () {
+  it('sets the state.appState.currentView.name property to info', function (done) {
     var initialState = {
       appState: {
         activeAddress: 'foo',
@@ -18,5 +18,6 @@ describe('SHOW_INFO_PAGE', function () {
     const action = actions.showInfoPage()
     var resultingState = reducers(initialState, action)
     assert.equal(resultingState.appState.currentView.name, 'info')
+    done()
   })
 })

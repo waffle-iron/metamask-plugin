@@ -18,152 +18,152 @@ describe('util', function () {
   })
 
   describe('#parseBalance', function () {
-    it('should render 0.01 eth correctly', function () {
+    it('should render 0.01 eth correctly', async function () {
       const input = '0x2386F26FC10000'
-      const output = util.parseBalance(input)
+      const output = await util.parseBalance(input)
       assert.deepEqual(output, ['0', '01'])
     })
 
-    it('should render 12.023 eth correctly', function () {
+    it('should render 12.023 eth correctly', async function () {
       const input = 'A6DA46CCA6858000'
-      const output = util.parseBalance(input)
+      const output = await util.parseBalance(input)
       assert.deepEqual(output, ['12', '023'])
     })
 
-    it('should render 0.0000000342422 eth correctly', function () {
+    it('should render 0.0000000342422 eth correctly', async function () {
       const input = '0x7F8FE81C0'
-      const output = util.parseBalance(input)
+      const output = await util.parseBalance(input)
       assert.deepEqual(output, ['0', '0000000342422'])
     })
 
-    it('should render 0 eth correctly', function () {
+    it('should render 0 eth correctly', async function () {
       const input = '0x0'
-      const output = util.parseBalance(input)
+      const output = await util.parseBalance(input)
       assert.deepEqual(output, ['0', '0'])
     })
   })
 
   describe('#addressSummary', function () {
-    it('should add case-sensitive checksum', function () {
+    it('should add case-sensitive checksum', async function () {
       var address = '0xfdea65c8e26263f6d9a1b5de9555d2931a33b825'
-      var result = util.addressSummary(address)
+      var result = await util.addressSummary(address)
       assert.equal(result, '0xFDEa65C8...b825')
     })
 
-    it('should accept arguments for firstseg, lastseg, and keepPrefix', function () {
+    it('should accept arguments for firstseg, lastseg, and keepPrefix', async function () {
       var address = '0xfdea65c8e26263f6d9a1b5de9555d2931a33b825'
-      var result = util.addressSummary(address, 4, 4, false)
+      var result = await util.addressSummary(address, 4, 4, false)
       assert.equal(result, 'FDEa...b825')
     })
   })
 
   describe('#isValidAddress', function () {
-    it('should allow 40-char non-prefixed hex', function () {
+    it('should allow 40-char non-prefixed hex', async function () {
       var address = 'fdea65c8e26263f6d9a1b5de9555d2931a33b825'
-      var result = util.isValidAddress(address)
+      var result = await util.isValidAddress(address)
       assert.ok(result)
     })
 
-    it('should allow 42-char non-prefixed hex', function () {
+    it('should allow 42-char non-prefixed hex', async function () {
       var address = '0xfdea65c8e26263f6d9a1b5de9555d2931a33b825'
-      var result = util.isValidAddress(address)
+      var result = await util.isValidAddress(address)
       assert.ok(result)
     })
 
-    it('should not allow less non hex-prefixed', function () {
+    it('should not allow less non hex-prefixed', async function () {
       var address = 'fdea65c8e26263f6d9a1b5de9555d2931a33b85'
-      var result = util.isValidAddress(address)
+      var result = await util.isValidAddress(address)
       assert.ok(!result)
     })
 
-    it('should not allow less hex-prefixed', function () {
+    it('should not allow less hex-prefixed', async function () {
       var address = '0xfdea65ce26263f6d9a1b5de9555d2931a33b85'
-      var result = util.isValidAddress(address)
+      var result = await util.isValidAddress(address)
       assert.ok(!result)
     })
 
-    it('should recognize correct capitalized checksum', function () {
+    it('should recognize correct capitalized checksum', async function () {
       var address = '0xFDEa65C8e26263F6d9A1B5de9555D2931A33b825'
-      var result = util.isValidAddress(address)
+      var result = await util.isValidAddress(address)
       assert.ok(result)
     })
 
-    it('should recognize incorrect capitalized checksum', function () {
+    it('should recognize incorrect capitalized checksum', async function () {
       var address = '0xFDea65C8e26263F6d9A1B5de9555D2931A33b825'
-      var result = util.isValidAddress(address)
+      var result = await util.isValidAddress(address)
       assert.ok(!result)
     })
 
-    it('should recognize this sample hashed address', function () {
+    it('should recognize this sample hashed address', async function () {
       const address = '0x5Fda30Bb72B8Dfe20e48A00dFc108d0915BE9Bb0'
-      const result = util.isValidAddress(address)
-      const hashed = ethUtil.toChecksumAddress(address.toLowerCase())
+      const result = await util.isValidAddress(address)
+      const hashed = await ethUtil.toChecksumAddress(address.toLowerCase())
       assert.equal(hashed, address, 'example is hashed correctly')
       assert.ok(result, 'is valid by our check')
     })
   })
 
   describe('#numericBalance', function () {
-    it('should return a BN 0 if given nothing', function () {
-      var result = util.numericBalance()
+    it('should return a BN 0 if given nothing', async function () {
+      var result = await util.numericBalance()
       assert.equal(result.toString(10), 0)
     })
 
-    it('should work with hex prefix', function () {
-      var result = util.numericBalance('0x012')
+    it('should work with hex prefix', async function () {
+      var result = await util.numericBalance('0x012')
       assert.equal(result.toString(10), '18')
     })
 
-    it('should work with no hex prefix', function () {
-      var result = util.numericBalance('012')
+    it('should work with no hex prefix', async function () {
+      var result = await util.numericBalance('012')
       assert.equal(result.toString(10), '18')
     })
   })
 
   describe('#formatBalance', function () {
-    it('when given nothing', function () {
-      var result = util.formatBalance()
+    it('when given nothing', async function () {
+      var result = await util.formatBalance()
       assert.equal(result, 'None', 'should return "None"')
     })
 
-    it('should return eth as string followed by ETH', function () {
-      var input = new ethUtil.BN(ethInWei, 10).toJSON()
-      var result = util.formatBalance(input, 4)
+    it('should return eth as string followed by ETH', async function () {
+      var input = await new ethUtil.BN(ethInWei, 10).toJSON()
+      var result = await util.formatBalance(input, 4)
       assert.equal(result, '1.0000 ETH')
     })
 
-    it('should return eth as string followed by ETH', function () {
-      var input = new ethUtil.BN(ethInWei, 10).div(new ethUtil.BN('2', 10)).toJSON()
-      var result = util.formatBalance(input, 3)
+    it('should return eth as string followed by ETH', async function () {
+      var input = await new ethUtil.BN(ethInWei, 10).div(new ethUtil.BN('2', 10)).toJSON()
+      var result = await util.formatBalance(input, 3)
       assert.equal(result, '0.500 ETH')
     })
 
-    it('should display specified decimal points', function () {
+    it('should display specified decimal points', async function () {
       var input = '0x128dfa6a90b28000'
-      var result = util.formatBalance(input, 2)
+      var result = await util.formatBalance(input, 2)
       assert.equal(result, '1.33 ETH')
     })
-    it('should default to 3 decimal points', function () {
+    it('should default to 3 decimal points', async function () {
       var input = '0x128dfa6a90b28000'
-      var result = util.formatBalance(input)
+      var result = await util.formatBalance(input)
       assert.equal(result, '1.337 ETH')
     })
-    it('should show 2 significant digits for tiny balances', function () {
+    it('should show 2 significant digits for tiny balances', async function () {
       var input = '0x1230fa6a90b28'
-      var result = util.formatBalance(input)
+      var result = await util.formatBalance(input)
       assert.equal(result, '0.00032 ETH')
     })
-    it('should not parse the balance and return value with 2 decimal points with ETH at the end', function () {
+    it('should not parse the balance and return value with 2 decimal points with ETH at the end', async function () {
       var value = '1.2456789'
       var needsParse = false
-      var result = util.formatBalance(value, 2, needsParse)
+      var result = await util.formatBalance(value, 2, needsParse)
       assert.equal(result, '1.24 ETH')
     })
   })
 
   describe('normalizing values', function () {
     describe('#normalizeToWei', function () {
-      it('should convert an eth to the appropriate equivalent values', function () {
+      it('should convert an eth to the appropriate equivalent values', function (done) {
         var valueTable = {
           wei: '1000000000000000000',
           kwei: '1000000000000000',
@@ -186,59 +186,60 @@ describe('util', function () {
           var output = util.normalizeToWei(value, currency)
           assert.equal(output.toString(10), valueTable.wei, `value of ${output.toString(10)} ${currency} should convert to ${oneEthBn}`)
         }
+        done()
       })
     })
 
     describe('#normalizeEthStringToWei', function () {
-      it('should convert decimal eth to pure wei BN', function () {
+      it('should convert decimal eth to pure wei BN', async function () {
         var input = '1.23456789'
-        var output = util.normalizeEthStringToWei(input)
+        var output = await util.normalizeEthStringToWei(input)
         assert.equal(output.toString(10), '1234567890000000000')
       })
 
-      it('should convert 1 to expected wei', function () {
+      it('should convert 1 to expected wei', async function () {
         var input = '1'
-        var output = util.normalizeEthStringToWei(input)
+        var output = await util.normalizeEthStringToWei(input)
         assert.equal(output.toString(10), ethInWei)
       })
     })
 
     describe('#normalizeNumberToWei', function () {
-      it('should handle a simple use case', function () {
+      it('should handle a simple use case', async function () {
         var input = 0.0002
-        var output = util.normalizeNumberToWei(input, 'ether')
+        var output = await util.normalizeNumberToWei(input, 'ether')
         var str = output.toString(10)
         assert.equal(str, '200000000000000')
       })
 
-      it('should convert a kwei number to the appropriate equivalent wei', function () {
-        var result = util.normalizeNumberToWei(1.111, 'kwei')
+      it('should convert a kwei number to the appropriate equivalent wei', async function () {
+        var result = await util.normalizeNumberToWei(1.111, 'kwei')
         assert.equal(result.toString(10), '1111', 'accepts decimals')
       })
 
-      it('should convert a ether number to the appropriate equivalent wei', function () {
-        var result = util.normalizeNumberToWei(1.111, 'ether')
+      it('should convert a ether number to the appropriate equivalent wei', async function () {
+        var result = await util.normalizeNumberToWei(1.111, 'ether')
         assert.equal(result.toString(10), '1111000000000000000', 'accepts decimals')
       })
     })
     describe('#isHex', function () {
-      it('should return true when given a hex string', function () {
-        var result = util.isHex('c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2')
+      it('should return true when given a hex string', async function () {
+        var result = await util.isHex('c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2')
         assert(result)
       })
 
-      it('should return false when given a non-hex string', function () {
-        var result = util.isHex('c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714imnotreal')
+      it('should return false when given a non-hex string', async function () {
+        var result = await util.isHex('c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714imnotreal')
         assert(!result)
       })
 
-      it('should return false when given a string containing a non letter/number character', function () {
-        var result = util.isHex('c3ab8ff13720!8ad9047dd39466b3c%8974e592c2fa383d4a396071imnotreal')
+      it('should return false when given a string containing a non letter/number character', async function () {
+        var result = await util.isHex('c3ab8ff13720!8ad9047dd39466b3c%8974e592c2fa383d4a396071imnotreal')
         assert(!result)
       })
 
-      it('should return true when given a hex string with hex-prefix', function () {
-        var result = util.isHex('0xc3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2')
+      it('should return true when given a hex string with hex-prefix', async function () {
+        var result = await util.isHex('0xc3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2')
         assert(result)
       })
     })

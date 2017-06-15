@@ -4,14 +4,14 @@ const clone = require('clone')
 const MetaMaskController = require('../../app/scripts/metamask-controller')
 const firstTimeState = require('../../app/scripts/first-time-state')
 
-describe('MetaMaskController', function () {
+describe('MetaMaskController', async function () {
   const noop = () => {}
-  const metamaskController = new MetaMaskController({
+  const metamaskController = await new MetaMaskController({
     showUnconfirmedMessage: noop,
     unlockAccountMessage: noop,
     showUnapprovedTx: noop,
     // initial state
-    initState: clone(firstTimeState),
+    initState: await clone(firstTimeState),
   })
 
   beforeEach(function () {

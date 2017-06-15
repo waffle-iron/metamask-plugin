@@ -23,7 +23,7 @@ const oldTestRpc = 'https://rawtestrpc.metamask.io/'
 const newTestRpc = 'https://testrpc.metamask.io/'
 
 describe('wallet1 is migrated successfully', () => {
-  it('should convert providers', () => {
+  it('should convert providers', (done) => {
     wallet1.data.config.provider = { type: 'etherscan', rpcTarget: null }
 
     return migration2.migrate(wallet1)
@@ -103,6 +103,7 @@ describe('wallet1 is migrated successfully', () => {
       return migration13.migrate(twelfthResult)
     }).then((thirteenthResult) => {
       assert.equal(thirteenthResult.data.config.provider.type, 'ropsten', 'network has been changed to ropsten.')
+      done()
     })
   })
 })
