@@ -32,17 +32,8 @@ Network.prototype.render = function () {
       src: 'images/loading.svg',
     })
   } else if (providerName === 'mainnet') {
-    hoverText = 'Main Ethereum Network'
+    hoverText = 'Main Ubiq Network'
     iconName = 'ethereum-network'
-  } else if (providerName === 'ropsten') {
-    hoverText = 'Ropsten Test Network'
-    iconName = 'ropsten-test-network'
-  } else if (parseInt(networkNumber) === 3) {
-    hoverText = 'Ropsten Test Network'
-    iconName = 'ropsten-test-network'
-  } else if (providerName === 'kovan') {
-    hoverText = 'Kovan Test Network'
-    iconName = 'kovan-test-network'
   } else if (providerName === 'rinkeby') {
     hoverText = 'Rinkeby Test Network'
     iconName = 'rinkeby-test-network'
